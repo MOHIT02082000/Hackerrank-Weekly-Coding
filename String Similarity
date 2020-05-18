@@ -1,0 +1,69 @@
+//Problem Statement:
+//For two strings A and B, we define the similarity of the strings to be the length of the longest prefix common to both strings. For example, the similarity of strings "abc" and "abd" is 2, while the similarity of strings "aaa" and "aaab" is 3.
+//Calculate the sum of similarities of a string S with each of it's suffixes.
+
+//Input Format
+//The first line contains the number of test cases t. 
+//Each of the next t lines contains a string to process,s. 
+
+#include<stdio.h>
+#include<string.h>
+#include<iostream>
+#define N 100005
+using namespace std;
+
+char inp[N];
+int Z[N];
+
+int main()
+{
+    int t,i,l,r,n,j,k;
+    long long int sum;
+    scanf("%d\n",&t);
+    while(t>0)
+    {
+        scanf("%s",inp);
+        n=strlen(inp);
+        l=r=0;
+        Z[0]=n;
+        sum=0;
+        for(i=1;i<n;i++)
+        {
+            sum+=Z[i-1];
+            Z[i]=0;
+            if(l<=i&&i<=r)
+            {
+                if(Z[i-l]<r-i+1)
+                {
+                    Z[i]=Z[i-l];
+                    continue;
+                }
+                for(k=r-i+1,j=r+1;j<n;j++,k++)
+                {
+                    if(inp[j]!=inp[k])
+                        break;
+                }
+                Z[i]=k;
+                l=i;
+                r=j-1;
+            }
+            else
+            {
+                for(j=i;j<n;j++)
+                {
+                    if(inp[j]!=inp[j-i])
+                        break;
+                }
+                if(j==i)
+                    continue;
+                l=i;
+                r=j-1;
+                Z[i]=r-l+1;
+            }   
+        }
+        printf("%lld\n",sum+Z[n-1]);
+        t--;
+    }
+    return 0;
+}
+
