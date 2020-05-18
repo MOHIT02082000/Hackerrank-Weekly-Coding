@@ -1,0 +1,95 @@
+//Problem Satetment:You are given two positive integer numbers a and b. Permute (change order) of the digits of a to construct maximal number not exceeding b. No number in input and/or output can start with the digit 0.
+//It is allowed to leave a as it is.
+
+//Input Format
+//The first line contains integer a (1 ≤ a ≤ 10^18). The second line contains integer b (1 ≤ b ≤ 10^18). Numbers don't have leading zeroes. It is guaranteed that answer exists.
+
+//Output Format
+//Print the maximum possible number that is a permutation of digits of a and is not greater than b. The answer can't have any leading zeroes. It is guaranteed that the answer exists.
+//The number in the output should have exactly the same length as number a. It should be a permutation of digits of a.
+
+
+
+
+
+
+#include<stdio.h>
+#include<string.h>
+
+#define ll long long
+
+int main() {
+    ll a, b;
+    while (scanf("%lld%lld", &a, &b) != EOF) {
+        char aa[20], bb[20];
+        sprintf(aa, "%lld", a);
+        sprintf(bb, "%lld", b);
+        int lena = strlen(aa);
+        int lenb = strlen(bb);
+        if (lenb > lena) {
+            for (int i = 1; i < lena; i++)
+                for (int k = 0; k < lena - i; k++)
+                    if (aa[k] < aa[k + 1]) {
+                        char tmp = aa[k];
+                        aa[k] = aa[k + 1];
+                        aa[k + 1] = tmp;
+                    }
+        }
+        else {
+            int c[10] = { 0 };
+            for (int i = 0; i < lena; i++)
+                c[aa[i] - '0']++;
+            ll ans = 0;
+            for (int i = 0; i < lenb; i++) {
+                int index = 0, flag = 0;
+                for (int k = 9; k >= 0; k--) {
+                    if (c[k] && k < bb[i] - '0') {
+                        ans = ans * 10 + k;
+                        c[k]--;
+                        index = 1;
+                        flag = 1;
+                        break;
+                    }
+                    else if (c[k] && k == bb[i] - '0') {
+                        ans = ans * 10 + k;
+                        c[k]--;
+                        index = 1;
+                        break;
+                    }
+                }
+                while (!index) {
+                    i--;
+                    int last = ans % 10;
+                    c[last]++;
+                    ans /= 10;
+                    for (int k = last - 1; k >= 0; k--)
+                        if (c[k]) {
+                            ans = ans * 10 + k;
+                            c[k]--;
+                            index = 1;
+                            flag = 1;
+                            break;
+                        }
+                }
+                if (flag || i == lenb - 1) {
+                    for (;;) {
+                        int k;
+                        for (k = 9; k >= 0; k--) {
+                            if (c[k]) {
+                                ans = ans * 10 + k;
+                                c[k]--;
+                                break;
+                            }
+                        }
+                        if (k == -1)
+                            break;
+                    }
+                    sprintf(aa, "%lld", ans);
+                    break;
+                }
+            }
+        }
+        puts(aa);
+    }
+    return 0;
+}
